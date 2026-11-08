@@ -1,5 +1,18 @@
 [
   {
+    "membershipId": "FGSM-2026-9784",
+    "name": "Ali Zohaib",
+    "fatherName": "Muhammad Sabir",
+    "contact": "03184360458",
+    "idCardNo": "1234567890",
+    "picture": "https://res.cloudinary.com/evpets0v/image/upload/v1793987744/fg_sm_fitness_members/lofxhoht6enkw8bonf0i.jpg",
+    "picturePublicId": "fg_sm_fitness_members/lofxhoht6enkw8bonf0i",
+    "address": "lahore, chungi amar sidhu",
+    "status": "Active",
+    "createdAt": "2026-11-08T17:30:00.000Z",
+    "updatedAt": "2026-11-08T17:30:00.000Z"
+  },
+  {
     "membershipId": "FGSM-2026-7067",
     "name": "Ali Zohaib",
     "fatherName": "muhammad abdullah",
@@ -8,10 +21,9 @@
     "picture": "https://res.cloudinary.com/evpets0v/image/upload/v1793987744/fg_sm_fitness_members/lofxhoht6enkw8bonf0i.jpg",
     "picturePublicId": "fg_sm_fitness_members/lofxhoht6enkw8bonf0i",
     "address": "lahore",
-    "status": "Active",
+    "status": "Inactive",
     "createdAt": "2026-11-06T17:55:45.224Z",
-    "_id": "local_1793987745224",
-    "updatedAt": "2026-11-06T17:55:45.225Z"
+    "updatedAt": "2026-11-08T17:38:29.329Z"
   },
   {
     "membershipId": "FGSM-2026-3856",
@@ -24,7 +36,6 @@
     "address": "Model Town, Block B, Lahore",
     "status": "Active",
     "createdAt": "2026-11-06T17:44:48.863Z",
-    "_id": "local_1793987088863",
     "updatedAt": "2026-11-06T17:45:32.339Z"
   }
 ]
