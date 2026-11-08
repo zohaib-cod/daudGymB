@@ -1,12 +1,24 @@
 const Member = require("../models/Member");
 const { uploadToCloudinary } = require("../config/cloudinary");
-const { getDBStatus } = require("../config/db");
+const { connectDB, getDBStatus } = require("../config/db");
 const {
   getLocalMembers,
   saveLocalMember,
   updateLocalMemberStatus,
   deleteLocalMember,
 } = require("../utils/localStore");
+
+/**
+ * Helper to ensure MongoDB is connected before running any controller logic
+ */
+async function ensureDB() {
+  let status = getDBStatus();
+  if (!status.isConnected) {
+    await connectDB();
+    status = getDBStatus();
+  }
+  return status.isConnected;
+}
 
 /**
  * Register a new Gym Member
@@ -65,17 +77,16 @@ exports.registerMember = async (req, res) => {
       createdAt: new Date().toISOString(),
     };
 
-    // 3. Try Saving to MongoDB Atlas
+    // 3. Save to MongoDB Atlas (with local backup)
     let savedRecord = null;
     let storageType = "mongodb";
     let warning = null;
 
-    const { isConnected } = getDBStatus();
+    const isConnected = await ensureDB();
     if (isConnected) {
       try {
         const newMember = new Member(memberData);
         savedRecord = await newMember.save();
-        // Backup locally
         saveLocalMember({ ...memberData, _id: savedRecord._id.toString() });
       } catch (dbErr) {
         console.warn("MongoDB save failed, saving locally:", dbErr.message);
@@ -117,7 +128,7 @@ exports.registerMember = async (req, res) => {
 exports.getAllMembers = async (req, res) => {
   try {
     const { search = "", status = "" } = req.query;
-    const { isConnected } = getDBStatus();
+    const isConnected = await ensureDB();
 
     let members = [];
     let dataSource = "local";
@@ -146,7 +157,7 @@ exports.getAllMembers = async (req, res) => {
       }
     }
 
-    // Fallback if MongoDB didn't return
+    // Fallback if MongoDB query failed
     if (dataSource === "local") {
       let localList = getLocalMembers();
       if (status && status !== "All") {
@@ -185,7 +196,7 @@ exports.getAllMembers = async (req, res) => {
  */
 exports.getStats = async (req, res) => {
   try {
-    const { isConnected } = getDBStatus();
+    const isConnected = await ensureDB();
     let all = [];
 
     if (isConnected) {
@@ -232,7 +243,7 @@ exports.getStats = async (req, res) => {
 exports.getMemberById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { isConnected } = getDBStatus();
+    const isConnected = await ensureDB();
 
     let member = null;
     if (isConnected) {
@@ -271,7 +282,7 @@ exports.updateMemberStatus = async (req, res) => {
       return res.status(400).json({ error: "Invalid status value" });
     }
 
-    const { isConnected } = getDBStatus();
+    const isConnected = await ensureDB();
     let updated = null;
 
     if (isConnected) {
@@ -299,7 +310,7 @@ exports.updateMemberStatus = async (req, res) => {
 exports.deleteMember = async (req, res) => {
   try {
     const { id } = req.params;
-    const { isConnected } = getDBStatus();
+    const isConnected = await ensureDB();
 
     if (isConnected) {
       try {
@@ -317,4 +328,3 @@ exports.deleteMember = async (req, res) => {
     return res.status(500).json({ error: error.message || "Failed to delete member" });
   }
 };
-
